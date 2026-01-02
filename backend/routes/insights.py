@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from database.db import SessionLocal
-from models.expense import Expense
+from backend.database.db import SessionLocal
+from backend.models.expense import Expense
 from sqlalchemy import func
 
 router = APIRouter()
