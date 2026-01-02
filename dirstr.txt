@@ -1,0 +1,19 @@
+backend/
+│
+├── app.py                  # Entry point
+├── requirements.txt
+│
+├── routes/
+│   ├── receipt.py          # upload-receipt
+│   ├── predict.py          # predict-category
+│   └── insights.py         # spending insights
+│
+├── models/
+│   └── expense.py          # DB model
+│
+├── database/
+│   ├── db.py               # DB connection
+│   └── init_db.py
+│
+└── ml/
+    └── classifier.py       # imported ML function (from Member A)
