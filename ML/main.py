@@ -19,20 +19,23 @@ def upload_receipt():
     if file.filename == '':
         return jsonify({"error": "No file selected"}), 400
 
-    # Save the file temporarily
+    # Save the file
     filepath = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(filepath)
 
-    # 1. OCR: Get text from image
+    # 1. OCR: Get text from image (Uses the OpenCV + EasyOCR logic)
     extracted_text = extract_text_from_image(filepath)
 
-    # 2. ML: Predict category from that text
+    # 2. ML: Predict category
     category = get_prediction(extracted_text)
 
+    # CLEANUP FOR FRONTEND: 
+    # We send the full text for the database, but a snippet for the demo UI
     return jsonify({
         "status": "success",
-        "extracted_text": extracted_text,
         "category": category,
+        "extracted_text_full": extracted_text,
+        "display_text": extracted_text[:150] + "..." if len(extracted_text) > 150 else extracted_text,
         "file_path": filepath
     })
 
@@ -40,6 +43,9 @@ def upload_receipt():
 def predict_text():
     """Endpoint for manual text entry or digital receipts."""
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+        
     text = data.get('text', '')
     
     if not text:
@@ -47,6 +53,7 @@ def predict_text():
         
     category = get_prediction(text)
     return jsonify({
+        "status": "success",
         "text": text,
         "category": category
     })
@@ -54,11 +61,14 @@ def predict_text():
 @app.route('/get-insights', methods=['POST'])
 def get_insights():
     """Endpoint for generating dashboard analytics."""
-    # Member B sends the list of transactions from their database
+    # Expecting a list of transaction objects from Member B
     transactions = request.get_json() 
+    if not transactions:
+        return jsonify({"error": "No transaction data provided"}), 400
+        
     insights = generate_spending_insights(transactions)
     return jsonify(insights)
 
 if __name__ == '__main__':
-    # Running on port 5000
+    # host='0.0.0.0' allows Member B to connect from their computer on the same Wi-Fi
     app.run(host='0.0.0.0', port=5000, debug=True)
