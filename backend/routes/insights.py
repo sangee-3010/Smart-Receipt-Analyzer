@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from backend.database.db import SessionLocal
 from backend.models.expense import Expense
 from sqlalchemy import func
@@ -6,16 +6,27 @@ from sqlalchemy import func
 router = APIRouter()
 
 @router.get("/insights")
-def insights(user_id: str):
+def insights(user_id: str = Query(...)):
     db = SessionLocal()
 
-    total = db.query(func.sum(Expense.amount)).filter(
-        Expense.user_id == user_id
-    ).scalar() or 0
+    # Total spent by this user
+    total = db.query(func.sum(Expense.amount))\
+        .filter(Expense.user_id == user_id)\
+        .scalar() or 0
 
-    top = db.query(
-        Expense.category, func.count(Expense.category)
-    ).group_by(Expense.category).first()
+    # Top category for this user
+    top = (
+        db.query(
+            Expense.category,
+            func.count(Expense.category).label("cnt")
+        )
+        .filter(Expense.user_id == user_id)
+        .group_by(Expense.category)
+        .order_by(func.count(Expense.category).desc())
+        .first()
+    )
+
+    db.close()
 
     return {
         "total_spent": total,
