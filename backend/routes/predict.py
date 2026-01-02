@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ml.classifier import predict_category
+from backend.ml.classifier import predict_category
 
 router = APIRouter()
 

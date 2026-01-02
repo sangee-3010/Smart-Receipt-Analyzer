@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from database.db import SessionLocal
-from models.expense import Expense
-from ml.classifier import predict_category
+from backend.database.db import SessionLocal
+from backend.models.expense import Expense
+from backend.ml.classifier import predict_category
 
 router = APIRouter()
 

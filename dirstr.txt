@@ -1,19 +1,21 @@
 backend/
 │
-├── app.py                  # Entry point
-├── requirements.txt
+├── app.py
 │
 ├── routes/
-│   ├── receipt.py          # upload-receipt
-│   ├── predict.py          # predict-category
-│   └── insights.py         # spending insights
+│   ├── __init__.py
+│   ├── receipt.py
+│   ├── predict.py
+│   └── insights.py
 │
 ├── models/
-│   └── expense.py          # DB model
+│   ├── __init__.py
+│   └── expense.py
 │
 ├── database/
-│   ├── db.py               # DB connection
-│   └── init_db.py
+│   ├── __init__.py
+│   └── db.py
 │
 └── ml/
-    └── classifier.py       # imported ML function (from Member A)
+    ├── __init__.py
+    └── classifier.py
